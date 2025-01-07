@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-3.xsd">
+
+    <!-- Service for create the order -->
+
+    <service verb="create" noun="Order">
+        <in-parameters>
+            <parameter name="orderDate" required="true" type="Date"></parameter>
+            <parameter name="quantity" required="true"></parameter>
+            <parameter name="status" required="true"></parameter>
+            <parameter name="party_id" required="true"></parameter>
+            <parameter name="shipping_mech_id" required="true"></parameter>
+            <parameter name="billing_mech_id" required="true"></parameter>
+            <parameter name="product_id" required="true"></parameter>
+        </in-parameters>
+        <out-parameters>
+            <parameter name="orderlist"></parameter>
+            <parameter name="itemlist"></parameter>
+        </out-parameters>
+        <actions>
+
+            <entity-make-value entity-name="moqui.rerstapi.OrderHeader" value-field="orderlist" />
+            <set field="orderlist.orderDate" from="context.orderDate" />
+            <set field="orderlist.partyId" from="context.party_id" />
+            <set field="orderlist.billingContactMechId" from="context.billing_mech_id" />
+            <set field="orderlist.shippingContactMechId" from="context.shipping_mech_id" />
+            <entity-sequenced-id-primary value-field="orderlist" />
+            <entity-create value-field="orderlist" />
+
+            <entity-make-value entity-name="moqui.rerstapi.OrderItem" value-field="itemlist" />
+            <entity-sequenced-id-primary value-field="itemlist" />
+            <set field="itemlist.orderId" from="orderlist.orderId" />
+            <set field="itemlist.productId" from="context.product_id" />
+            <set field="itemlist.quantity" from="context.quantity" />
+            <set field="itemlist.status" from="context.status" />
+            <entity-create value-field="itemlist" />
+
+
+        </actions>
+    </service>
+
+    <!-- Retrieve Order Details: -->
+    <service verb="get" noun="Order">
+        <in-parameters>
+
+            <parameter name="order_id" />
+        </in-parameters>
+  
+        <out-parameters>
+            <parameter name="orderlist"></parameter>
+            <parameter name="orderdetail" />
+        </out-parameters>
+
+        <actions>
+
+            <entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="orderlist">
+                <field-map field-name="orderId" from="context.order_id" />
+            </entity-find-one>
+
+            <entity-find-related value-field="orderlist" relationship-name="OrderItem"
+                list="orderdetail" />
+
+
+        </actions>
+
+    </service>
+
+    <!-- Update an Order -->
+
+
+    <service verb="store" noun="Order">
+        <in-parameters>
+            <parameter name="order_id" />
+            <parameter name="orderDate" type="Date"></parameter>
+            <parameter name="quantity"></parameter>
+            <parameter name="status"></parameter>
+            <parameter name="party_id"></parameter>
+            <parameter name="shipping_mech_id"></parameter>
+            <parameter name="billing_mech_id"></parameter>
+            <parameter name="product_id"></parameter>
+        </in-parameters>
+        <out-parameters>
+            <parameter name="orderlist"></parameter>
+            <parameter name="itemlist"></parameter>
+        </out-parameters>
+
+
+        <actions>
+            <entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="orderlist">
+                <field-map field-name="orderId" from="context.order_id" />
+            </entity-find-one>
+            <if condition="context.orderDate != ''">
+                <set field="orderlist.orderDate" from="context.orderDate" />
+            </if>
+
+            <if condition="context.billing_mech_id != ''">
+                <set field="orderlist.billingContactMechId" from="context.billing_mech_id" />
+            </if>
+
+            <if condition="context.shipping_mech_id != ''">
+                <set field="orderlist.shippingContactMechId" from="context.shipping_mech_id" />
+            </if>
+            <entity-update value-field="orderlist" />
+
+            <entity-find-one entity-name="moqui.rerstapi.OrderItem" value-field="itemlist">
+                <field-map field-name="orderId" from="context.order_id" />
+                <field-map field-name="productId" from="context.product_id" />
+            </entity-find-one>
+            <if condition="context.quantity != ''">
+                <set field="itemlist.quantity" from="context.quantity" />
+            </if>
+            <if condition="context.status != ''">
+                <set field="itemlist.status" from="context.status" />
+            </if>
+            <entity-update value-field="itemlist" />
+        </actions>
+    </service>
+
+    <!-- Delete an Order  -->
+    <service verb="delete" noun="Order">
+        <in-parameters>
+            <parameter name="order_id" />
+        </in-parameters>
+
+        <out-parameters>
+            <parameter name="order_id" />
+        </out-parameters>
+
+        <actions>
+            <entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="filterlist">
+                <field-map field-name="orderId" from="order_id" />
+            </entity-find-one>
+
+            <entity-delete-related value-field="filterlist" relationship-name="OrderItem" />
+            <entity-delete value-field="filterlist" />
+
+        </actions>
+
+
+    </service>
+
+    <!-- Add an Order Item -->
+
+    <service verb="add" noun="Order">
+    <in-parameters>
+    <parameter name="order_id" />
+    <parameter name="product_id" />
+    <parameter name="quantity" />
+    <parameter name="status" />
+
+    </in-parameters>
+    <out-parameters>
+    
+    <parameter name="datalist" />
+    </out-parameters>
+ <actions>
+ <entity-make-value entity-name="moqui.rerstapi.OrderItem" value-field="datalist" />
+
+ <entity-sequenced-id-primary value-field="datalist"/>
+ <set field="datalist.orderId" from="context.order_id" />
+ <set field="datalist.productId" from="context.product_id" />
+ <set field="datalist.quantity" from="context.quantity" />
+ <set field="datalist.status" from="context.status" />
+ <entity-create value-field="datalist" />
+ </actions>
+    </service>
+
+
+</services>

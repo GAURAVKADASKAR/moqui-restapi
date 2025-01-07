@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-3.xsd">
+    <!--Add
+    Contact Mechanism -->
+
+    <service verb="create" noun="ContactMech">
+        <in-parameters>
+            <parameter name="party_id" />
+            <parameter name="contactMechId" />
+            <parameter name="state" />
+            <parameter name="city" />
+            <parameter name="streetAddress" />
+            <parameter name="postalCode" />
+
+        </in-parameters>
+        <out-parameters>
+            <parameter name="contactdata"></parameter>
+        </out-parameters>
+
+        <actions>
+            <entity-make-value entity-name="moqui.rerstapi.ContactMech" value-field="contactdata" />
+            <set field="contactdata.partyId" from="context.party_id" />
+            <set field="contactdata.contactMechId" from="context.contactMechId" />
+            <set field="contactdata.state" from="context.state" />
+            <set field="contactdata.city" from="context.city" />
+            <set field="contactdata.streetAddress" from="context.streetAddress" />
+            <set field="contactdata.postalCode" from="context.postalCode" />
+            <entity-create value-field="contactdata" />
+        </actions>
+    </service>
+
+    <!-- service for the Retrieve Contact Mechanisms -->
+
+    <service verb="get" noun="ContactMech">
+        <in-parameters>
+            <parameter name="party_id" />
+        </in-parameters>
+        <out-parameters>
+         
+            <parameter name="contactmechlist" />
+        </out-parameters>
+        <actions>
+         
+            <entity-find entity-name="moqui.rerstapi.ContactMech" list="contactmechlist">
+                <econdition field-name="partyId" from="context.party_id" />
+            </entity-find>
+        </actions>
+    </service>
+
+<!-- Service for Update Contact Mechanism  -->
+<service verb="store" noun="ContactMech">
+<in-parameters>
+<parameter name="party_id" />
+<parameter name="contact_mech_id" />
+<parameter name="state" />
+<parameter name="city" />
+<parameter name="streetAddress" />
+<parameter name="postalCode" />
+</in-parameters>
+
+<out-parameters>
+<parameter name="datalist" />
+</out-parameters>
+
+<actions>
+<entity-find-one entity-name="moqui.rerstapi.ContactMech" value-field="datalist">
+<field-map field-name="partyId" from="context.party_id"/>
+<field-map field-name="contactMechId" from="contact_mech_id"/>
+</entity-find-one>
+
+<if condition="datalist != null">
+<set field="datalist.state" from="context.state" />
+<set field="datalist.city" from="context.city" />
+<set field="datalist.streetAddress" from="context.streetAddress" />
+<set field="datalist.postalCode" from="context.postalCode"/>
+<entity-update value-field="datalist" />
+
+
+</if>
+
+</actions>
+
+</service>
+
+<!-- Service Delete Contact Mechanism -->
+
+<service verb="delete" noun="ContactMech">
+<in-parameters>
+<parameter name="party_id" />
+<parameter name="contact_mech_id" />
+</in-parameters>
+<out-parameters>
+<parameter name="party_id" />
+</out-parameters>
+
+<actions>
+<entity-find-one entity-name="moqui.rerstapi.ContactMech" value-field="datalist">
+<field-map field-name="partyId" from="context.party_id"/>
+<field-map field-name="contactMechId" from="context.contact_mech_id"/>
+</entity-find-one>
+
+<entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="datafordelete">
+<field-map field-name="shippingContactMechId" from="context.contact_mech_id" />
+</entity-find-one>
+<entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="deletetwo">
+<field-map field-name="billingContactMechId" from="context.contact_mech_id" />
+</entity-find-one>
+
+<entity-delete-related value-field="datafordelete" relationship-name="OrderItem" />
+<entity-delete-related value-field="deletetwo" relationship-name="OrderItem" />
+
+<entity-delete-related value-field="datalist" relationship-name="Order" />
+
+<entity-delete value-field="datalist"/>
+ 
+
+
+</actions>
+</service>
+
+</services>

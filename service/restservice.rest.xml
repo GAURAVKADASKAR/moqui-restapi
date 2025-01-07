@@ -1,0 +1,39 @@
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/rest-api-3.xsd"
+          name="parties" displayName="Rerst api services" version="1.0.0" description="Services for Customer">
+
+          <!-- Create a Party: POST /parties -->
+    <resource name="parties" require-authentication="anonymous-all">
+        <method type="post" require-authentication="anonymous-all">
+            <service name="restservice.partyservice.create#Party" />
+        </method>
+
+        <!-- Retrieve Party Details: GET /parties/{party_id} -->
+        <id name="partyId">
+        <method type="get"  require-authentication="anonymous-all">
+        <service name="restservice.partyservice.get#Party" />
+        </method>
+
+        <!-- Update a Party: PUT /parties/{party_id} -->
+        <method type="put">
+        <service name="restservice.partyservice.put#Party" />
+        </method>
+
+        <!-- Delete a Party: DELETE /parties/{party_id} -->
+
+        <method type="delete">
+        <service name="restservice.partyservice.delete#Party" />
+        </method>
+  <!-- Add Contact Mechanism: POST /parties/{party_id}/contacts -->
+         <resource name="contacts">
+          <method type="post">
+          <service name="restservice.contactMechservice.create#ContactMech"/>
+          </method>
+          </resource> 
+        </id>
+
+      
+         
+    </resource>
+
+</resource>
