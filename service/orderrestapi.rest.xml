@@ -1,0 +1,35 @@
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/rest-api-3.xsd"
+    name="orders" displayName="Order Rest Api" version="1.0.0"
+    description="Services for Customer">
+
+    <!-- Create a Party: OPST /parties -->
+    <resource name="orders" require-authentication="anonymous-all">
+        <method type="post" require-authentication="anonymous-all">
+            <service name="restservice.orderservice.create#Order" />
+        </method>
+
+        <!-- Retrieve Order Details: GET /orders/{order_id} -->
+        <id name="order_id">
+        <method type="get">
+        <service name="restservice.orderservice.get#Order" />
+        </method>
+        <method type="put">
+        <service name="restservice.orderservice.store#Order" />
+        </method>
+<!-- Delete an Order: DELETE /orders/{order_id} -->
+        <method type="delete">
+        <service name="restservice.orderservice.delete#Order" />
+        </method>
+
+        <!-- Add an Order Item: POST /orders/{order_id}/items -->
+       <resource name="items" require-authentication="anonymous-all">
+       
+       <method type="post">
+       <service name="restservice.orderservice.add#Order" />
+       </method>
+       </resource>
+        </id>
+
+</resource>
+</resource>

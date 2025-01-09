@@ -3,7 +3,7 @@
 <!-- service for create the party -->
 <service verb="create" noun="Party">
 <in-parameters>
-<auto-parameters include="all" />
+<auto-parameters include="nonpk" />
 </in-parameters>
 <out-parameters>
 <auto-parameters include="pk" />
@@ -27,7 +27,7 @@
 <service verb="get" noun="Party">
 
 <in-parameters>
-<parameter name="partyId" />
+<parameter name="party_id" />
 </in-parameters>
 <out-parameters>
 <parameter name="partyList"></parameter>
@@ -36,7 +36,7 @@
 <actions>
 
 <entity-find entity-name="moqui.rerstapi.Party" list="partyList">
-<econdition field-name="partyId"/>
+<econdition field-name="partyId" from="context.party_id"/>
 <select-field field-name="partyType" />
 <select-field field-name="partyId" />
 <select-field field-name="lastName" />
@@ -52,7 +52,8 @@
 <service verb="put" noun="Party">
 
 <in-parameters>
-<auto-parameters include="all"/>
+<parameter name="party_id" />
+<auto-parameters include="nonpk"/>
 </in-parameters>
 <out-parameters>
 <parameter name="pk"></parameter>
@@ -62,7 +63,7 @@
 
 <entity-find-one entity-name="moqui.rerstapi.Party" value-field="partyList">
 
-<field-map field-name="partyId" from="context.partyId" />
+<field-map field-name="partyId" from="context.party_id" />
 
 </entity-find-one>
 
@@ -81,20 +82,20 @@
 <service verb="delete" noun="Party">
 <in-parameters>
 
-<parameter name="partyId" />
+<parameter name="party_id" />
 </in-parameters>
 
 <out-parameters>
-<parameter name="partyId" />
+<parameter name="party_id" />
 </out-parameters>
 
 <actions>
 
 <entity-find-one entity-name="moqui.rerstapi.Party" value-field="filterdata">
-<field-map field-name="partyId"/>
+<field-map field-name="partyId" from="context.party_id"/>
 </entity-find-one>
 <entity-find-one entity-name="moqui.rerstapi.OrderHeader" value-field="filterforid">
-<field-map field-name="partyId" from="context.partyId" />
+<field-map field-name="partyId" from="context.party_id" />
 </entity-find-one>
 <if condition="filterforid != null">
 <entity-delete-related value-field="filterforid" relationship-name="OrderItem" />

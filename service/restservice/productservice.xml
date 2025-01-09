@@ -5,17 +5,18 @@
 
     <service verb="create" noun="Product">
         <in-parameters>
-            <auto-parameters include="all" />
+            <auto-parameters include="nonpk"/>
         </in-parameters>
 
         <out-parameters>
-            <auto-parameters include="all" />
+            <auto-parameters include="pk" />
         </out-parameters>
 
         <actions>
 
             <entity-make-value entity-name="moqui.rerstapi.Product" value-field="productdata" />
             <entity-set value-field="productdata" include="all" />
+            <entity-sequenced-id-primary value-field="productdata" />
             <entity-create value-field="productdata" />
         </actions>
     </service>
@@ -24,15 +25,13 @@
 
     <service verb="get" noun="Product">
         <in-parameters>
-
             <parameter name="product_id" />
         </in-parameters>
         <out-parameters>
-
             <parameter name="productList" />
         </out-parameters>
-
         <actions>
+
             <entity-find entity-name="moqui.rerstapi.Product" list="productList">
                 <econdition field-name="productId" from="context.product_id" />
             </entity-find>
@@ -47,7 +46,8 @@
 
     <service verb="store" noun="Product">
         <in-parameters>
-            <auto-parameters include="all" />
+        <parameter name="product_id" />
+            <auto-parameters include="nonpk" />
         </in-parameters>
 
         <out-parameters>
@@ -56,7 +56,7 @@
 
         <actions>
             <entity-find-one entity-name="moqui.rerstapi.Product" value-field="datalist">
-                <field-map field-name="productId" />
+                <field-map field-name="productId" from="context.product_id"/>
             </entity-find-one>
 
             <if condition="datalist != null">
@@ -85,7 +85,9 @@
             <entity-find-one entity-name="moqui.rerstapi.Product" value-field="item">
                 <field-map field-name="productId" from="context.product_id" />
             </entity-find-one>
+
             <if condition="item != null">
+             <entity-delete-related value-field="item" relationship-name="OrderItem" />
                 <entity-delete value-field="item" />
             </if>
 
