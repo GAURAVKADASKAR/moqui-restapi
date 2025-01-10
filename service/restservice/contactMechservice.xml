@@ -103,11 +103,13 @@
                     list="listdata" />
                 <if condition="!listdata">
                     <entity-delete value-field="datalist" />
-
-                </if>
-                <else>
+                    
+                     <else>
                     <message>cannot delete the record</message>
                 </else>
+
+                </if>
+               
             </if>
            
         </actions>
